@@ -1,0 +1,3 @@
+rootProject.name = 'akka-event-sourcing-sample-java-jjug-2022-spring'
+
+include "order-service", "order-api", "support-stack"

@@ -1,0 +1,78 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+def akkaVersion = "2.6.18"
+def akkaHttpVersion = "10.2.7"
+def scalaBinary = "2.13"
+
+allprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation 'org.functionaljava:functionaljava:5.0'
+
+        // Akka log
+        implementation "com.typesafe.akka:akka-slf4j_$scalaBinary:$akkaVersion"
+        implementation "ch.qos.logback:logback-classic:1.2.11"
+
+        // For unmarshalling record class
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
+        implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
+        implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
+
+project(":order-api") {
+    dependencies {
+        implementation project(":support-stack")
+
+        implementation "com.typesafe.akka:akka-actor-typed_$scalaBinary:$akkaVersion"
+    }
+}
+
+project(":order-service") {
+    dependencies {
+        implementation project(":order-api")
+        implementation project(":support-stack")
+
+        // Akka
+        implementation "com.typesafe.akka:akka-actor-typed_$scalaBinary:$akkaVersion"
+        implementation "com.typesafe.akka:akka-stream-typed_$scalaBinary:$akkaVersion"
+        implementation "com.typesafe.akka:akka-cluster-typed_$scalaBinary:$akkaVersion"
+        implementation "com.typesafe.akka:akka-cluster-sharding-typed_$scalaBinary:$akkaVersion"
+        implementation "com.typesafe.akka:akka-serialization-jackson_$scalaBinary:$akkaVersion"
+        implementation platform("com.typesafe.akka:akka-bom_$scalaBinary:$akkaVersion")
+
+        // Akka Persistence
+        implementation("com.typesafe.akka:akka-persistence-typed_$scalaBinary:$akkaVersion")
+        implementation("org.iq80.leveldb:leveldb:0.12")
+        implementation("org.fusesource.leveldbjni:leveldbjni-all:1.8")
+
+        // Akka Http
+        implementation("com.typesafe.akka:akka-http-core_$scalaBinary:$akkaHttpVersion")
+        implementation("com.typesafe.akka:akka-http_$scalaBinary:$akkaHttpVersion")
+        implementation("com.typesafe.akka:akka-http-jackson_$scalaBinary:$akkaHttpVersion")
+
+        // Library
+        implementation 'com.google.inject:guice:5.1.0'
+    }
+}
