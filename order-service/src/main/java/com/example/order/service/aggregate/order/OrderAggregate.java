@@ -111,10 +111,10 @@ public class OrderAggregate extends EventSourcedBehavior<OrderAggregateProtocol.
         return newEventHandlerBuilder()
                 .forAnyState()
                 .onEvent(OrderEvents.OrderCreated.class, (__, event) -> {
-                    var order = Order.newEmpty(event.orderId(), event.accountId());
+                    var order = Order.applyEvent(event);
 
-                    return order.applyEvent(event);
+                    return order;
                 })
-                .onAnyEvent(Order::applyEvent);
+                .onAnyEvent((order, event) -> order.applyEvent(event));
     }
 }

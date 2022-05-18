@@ -8,8 +8,8 @@ public record Order(OrderId orderId, AccountId accountId, State state) implement
         return Either.right(new OrderEvents.OrderCreated(orderId, accountId, detail));
     }
 
-    public static Order newEmpty(OrderId orderId, AccountId accountId) {
-        return new Order(orderId, accountId, State.NONE);
+    public static Order applyEvent(OrderEvents.OrderCreated event) {
+        return new Order(event.orderId(), event.accountId(), State.CREATED);
     }
 
     public Either<OrderError, OrderEvents.OrderShipped> makeShipped() {
@@ -55,7 +55,6 @@ public record Order(OrderId orderId, AccountId accountId, State state) implement
     }
 
     public enum State {
-        NONE,
         CREATED,
         SHIPPED,
         CANCELED,
